@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r}
-#EXERCISE 1:
+#EXERCISE 1: MERGING
 #Step 1: Store links to clean CIA data from previous homework's REPO
 #Store the link to cleaned infant mortality data
 infantMortalityLink = "https://raw.githubusercontent.com/Funtamendals-Charles/Homework3/refs/heads/main/Final_Output/Clean_Infant_Mortality.csv"
@@ -24,10 +24,17 @@ lifeExpectancy = read.csv(lifeExpectancyLink)
 maternalMortality = read.csv(maternalMortalityLink)
 
 #Step 3: Merge the data
+#First merge infant mortality data with the life expectancy data on the name column, keeping all entries from both data sets
+#Lastly, merge the maternal mortality data to the previous data, keeping all entries from all 3 datasets
 FullData = merge(
   merge(infantMortality, lifeExpectancy, by = "name", all = TRUE),
   maternalMortality,
   by = "name",
   all = TRUE
 )
+
+#Step 4: Clean the data
+#Only select the data on Country Name, Region, Infant Mortality, Life Expectancy and Maternal Mortality (dropping repeating region data)
+FullData = FullData[c("name", "region.x", "deaths.per.1000.live.births", "years", "deaths.per.100000.live.births")]
+#
 ```
