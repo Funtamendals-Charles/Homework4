@@ -1,0 +1,33 @@
+---
+title: "Main_Code"
+author: "Charles Liu"
+date: "2026-01-14"
+output: html_document
+---
+
+```{r}
+#EXERCISE 1:
+#Step 1: Store links to clean CIA data from previous homework's REPO
+#Store the link to cleaned infant mortality data
+infantMortalityLink = "https://raw.githubusercontent.com/Funtamendals-Charles/Homework3/refs/heads/main/Final_Output/Clean_Infant_Mortality.csv"
+#Store the link to cleaned life expectancy data
+lifeExpectancyLink = "https://raw.githubusercontent.com/Funtamendals-Charles/Homework3/refs/heads/main/Final_Output/Clean_Life_Expectancy.csv"
+#Store the link to cleaned maternal mortality data
+maternalMortalityLink = "https://raw.githubusercontent.com/Funtamendals-Charles/Homework3/refs/heads/main/Final_Output/Clean_Maternal_Mortality.csv"
+
+#Step 2: Load the data into data frames 
+#Load infant mortality data in data frame
+infantMortality = read.csv(infantMortalityLink)
+#Load life expectancy data into data frame
+lifeExpectancy = read.csv(lifeExpectancyLink)
+#Load maternal mortality data into data frame
+maternalMortality = read.csv(maternalMortalityLink)
+
+#Step 3: Merge the data
+FullData = merge(
+  merge(infantMortality, lifeExpectancy, by = "name", all = TRUE),
+  maternalMortality,
+  by = "name",
+  all = TRUE
+)
+```

@@ -1,0 +1,105 @@
+---
+title: "Main"
+output: html_document
+---
+
+```{r}
+#Store link to datasets from Github Repo
+#Infant Mortality Link
+infantMortLink="https://raw.githubusercontent.com/Funtamendals-Charles/Homework3/refs/heads/main/Infant%20mortality%20rate.csv"
+#Life Expectancy Link
+lifeExpLink = "https://raw.githubusercontent.com/Funtamendals-Charles/Homework3/refs/heads/main/Life%20expectancy%20at%20birth.csv"
+#Maternal Mortality Link
+maternalMortLink = "https://raw.githubusercontent.com/Funtamendals-Charles/Homework3/refs/heads/main/Maternal%20mortality%20ratio.csv"
+
+#Create dataframes from the dataset links
+#Infant Mortality Dataframe
+infantMort = read.csv(infantMortLink)
+#Life Expectancy Mortality Dataframe
+lifeExp = read.csv(lifeExpLink)
+#Maternal Mortality Dataframe
+maternalMort = read.csv(maternalMortLink)
+
+#View each dataframe and assess each columns data type
+#View infant mortality data
+str(infantMort)
+#View life expectancy data
+str(lifeExp)
+#View maternal mortality data
+str(maternalMort)
+
+```
+```{r}
+#Upon viewing the data it is evident that the data for Infant Mortality and Maternal Mortality have issues
+
+#WHAT is the problem?
+#In the Infant Mortality data set, the column "deaths.1,000.live.births" is split into "deaths.1" and "X000.live.births"
+#In the Maternal Mortality data set, the column "deaths.100,000.live.births" is split into "deaths.100" and "X000.live.births"
+#As a result of this, both data sets have an extra column and every column after the split is offset a column to the right of its corresponding data
+#No issues seem to be present in the Life Expectancy data set.
+
+#WHY did this problem happen?
+#When being read by R, the function read.csv separates elements in a row via commas.
+#As such the function split these columns by the comma resulting in two incorrectly separate columns.
+
+#HOW do we solve this?
+#Since we know we only want to keep the following columns: country name, the variable, and the region...
+#We just need to fix the variable and region columns since the country name did not get offset, as it was before when the split occurred. 
+#First, we can copy the data in the "ranking" column to the "region" column since ranking currently holds the data corresponding to the "region" column.
+#Then, we take the split columns and rename the first of the pair to our corresponding variable name since the original data is stored there.
+#Finally, we filter the data set for only the relevant columns: country name, the variable, and the region
+
+```
+
+```{r}
+#Copy the "ranking" column to the "region" column
+#Set the data in infantMort$region to the data stored in infantMort$ranking
+infantMort[,c("region")] <- infantMort[,c("ranking")]
+#Set the data in maternalMort$region to the data stored in materialMort$ranking
+maternalMort[,c("region")] <- maternalMort[,c("ranking")]
+```
+
+```{r}
+#Rename the split column containing the data relevant to our data sets
+#Rename $infantMort$deaths.1 to $infantMort$deaths.per.1000.live.births"
+colnames(infantMort)[colnames(infantMort) == "deaths.1"] <- "deaths.per.1000.live.births"
+#Rename $maternalMort$deaths.100 to $maternalMort$deaths.per.100000.live.births"
+colnames(maternalMort)[colnames(maternalMort) == "deaths.100"] <- "deaths.per.100000.live.births"
+```
+
+```{r}
+#Filter the data frames to only have relevant columns: country name, the variable, and the region.
+#Filter Infant Mortality Data
+infantMort = infantMort[,c('name', 'deaths.per.1000.live.births', 'region')]
+#Filter Life Expectancy Data
+lifeExp = lifeExp[,c('name','years','region')]
+#Filter Maternal Mortality Data
+maternalMort = maternalMort[,c('name','deaths.per.100000.live.births','region')]
+
+#View each data frame and assess each columns data type
+#View infant mortality data
+str(infantMort)
+#View life expectancy data
+str(lifeExp)
+#View maternal mortality data
+str(maternalMort)
+```
+
+```{r}
+#Export each data frame to both RDS and CSV - all files will be exported to the Final_Output folder
+#To CSV:
+#Convert infant mortality data frame to csv 
+write.csv(infantMort, "Final_Output/Clean_Infant_Mortality.csv", row.names=FALSE)
+#Convert life expectancy data frame to csv
+write.csv(lifeExp, "Final_Output/Clean_Life_Expectancy.csv", row.names=FALSE)
+#Convert maternal mortality data frame to csv
+write.csv(maternalMort, "Final_Output/Clean_Maternal_Mortality.csv", row.names=FALSE)
+
+#To RDS:
+#Convert infant mortality data frame to rsd
+saveRDS(infantMort, "Final_Output/Clean_Infant_Mortality.rds")
+#Convert life expectancy data frame to rsd
+saveRDS(lifeExp, "Final_Output/Clean_Life_Expectancy.rds")
+#Convert maternal mortality data frame to rsd
+saveRDS(maternalMort, "Final_Output/Clean_Maternal_Mortality.rds")
+```
