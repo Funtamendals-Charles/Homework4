@@ -36,5 +36,60 @@ FullData = merge(
 #Step 4: Clean the data
 #Only select the data on Country Name, Region, Infant Mortality, Life Expectancy and Maternal Mortality (dropping repeating region data)
 FullData = FullData[c("name", "region.x", "deaths.per.1000.live.births", "years", "deaths.per.100000.live.births")]
-#
+#Rename all columns
+names(FullData) = c("Country", "Region", "Infant.Mortality.per.1000.live.births", "Life.Expectancy", "Maternal.Mortality.per.100000.live.births")
+
+#Step 5: View the data
+str(FullData)
+#It seems the Maternal Mortality data had data from fewer countries than Infant Mortality and Life Expectancy as seen by the NA values.
+
+#Step 6: Save the data as CSV
+write.csv(FullData, "Final_Output/Wide_FullData.csv", row.names=FALSE)
+```
+
+```{r}
+#EXERCISE 2: AGGREGATING
+#Step 1: Load the file:
+FullData = read.csv("Final_Output/Wide_FullData.csv")
+#Step 2: Aggregate the data by Region, taking the average for Infant Mortality, Life Expectancy and Maternal Mortality.
+#Use of aggregate function and store to our AveragesByRegion variable
+AveragesByRegion = aggregate(
+  #cbind allows us to select multiple columns we want to aggregate, then we specify that we want to aggregate by the Region column
+  cbind(Infant.Mortality.per.1000.live.births, Life.Expectancy, Maternal.Mortality.per.100000.live.births) ~ Region,
+  #Input the data frame
+  data = FullData,
+  #Use mean as our aggregation function
+  FUN = mean
+  )
+#Step 3: View the aggregated data frame
+str(AveragesByRegion)
+#Step 4: Save the aggregated data frame as csv
+write.csv(AveragesByRegion, "Final_Output/Aggregated_FullData.csv", row.names=FALSE)
+```
+
+```{r}
+#EXERCISE 3: RESHAPING
+#Step 1: Load the file:
+FullData = read.csv("Final_Output/Wide_FullData.csv")
+#Step 2: Reshape the file into long format using reshape function
+Long_FullData = reshape(
+  #Input original wide data
+  FullData,
+  #Select variables to stack 
+  varying = c("Infant.Mortality.per.1000.live.births", "Life.Expectancy", "Maternal.Mortality.per.100000.live.births"),
+  #Name the column where values of each country + variable pair are reported
+  v.names = "Value",
+  #Name the column that reports which variable is being used
+  timevar = "Metric",
+  #Define labels such that each row has a unique ID: country.label. In this case we will use the metric as the label.
+  times = c("Infant.Mortality.per.1000.live.births", "Life.Expectancy", "Maternal.Mortality.per.100000.live.births"),
+  #Define country such that each row has a unique ID: country.label. In this case we will use our Country column.
+  idvar = "Country",
+  #Specify we want to create data in a long format.
+  direction = "long"
+)
+#Step 3: View the new long form data:
+head(Long_FullData, 10000)
+#Step 4: Save the data as CSV:
+write.csv(Long_FullData, "Final_Output/Long_FullData.csv", row.names=FALSE)
 ```

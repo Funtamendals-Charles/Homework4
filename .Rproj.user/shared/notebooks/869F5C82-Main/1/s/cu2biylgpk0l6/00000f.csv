@@ -1,0 +1,5 @@
+"0","#EXERCISE 3: RESHAPING"
+"0","#Step 1: Load the file:"
+"0","FullData = read.csv(""Final_Output/Wide_Full.csv"")"
+"2","Error in file(file, ""rt"") : cannot open the connection
+"
