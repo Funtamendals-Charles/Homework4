@@ -89,7 +89,9 @@ Long_FullData = reshape(
   direction = "long"
 )
 #Step 3: View the new long form data:
-head(Long_FullData, 10000)
+#Set the ViewLength to 10 when Knitting, else set to > 681 to few all rows
+ViewLength = 10
+head(Long_FullData, ViewLength)
 #Step 4: Save the data as CSV:
 write.csv(Long_FullData, "Final_Output/Long_FullData.csv", row.names=FALSE)
 ```
